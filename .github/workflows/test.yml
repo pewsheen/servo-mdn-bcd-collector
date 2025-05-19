@@ -18,25 +18,25 @@ jobs:
           repository: openwebdocs/mdn-bcd-collector
           submodules: true
           path: collector
-      # - name: Clone Servo
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: servo/servo
-      #     path: servo
+      - name: Clone Servo
+        uses: actions/checkout@v4
+        with:
+          repository: servo/servo
+          path: servo
       - name: Setup NodeJS
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      # - name: Install uv
-      #   uses: astral-sh/setup-uv@v4
-      #   with:
-      #     version: "0.5.6"
-      # - name: Build Servo
-      #   run: |
-      #     cd servo
-      #     ./mach bootstrap
-      #     ./mach build
-      - name: Run MDN BCD Collector in background
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          version: "0.5.6"
+      - name: Build Servo
+        run: |
+          cd servo
+          ./mach bootstrap
+          ./mach build
+      - name: Run MDN bcd collector in background
         run: |
           cd collector
           npm ci
@@ -55,7 +55,7 @@ jobs:
           done
 
           echo "Server is up!"
-      # - name: Run Servo Headless
-      #   run: |
-      #     cd servo
-      #     ./mach run http://localhost:5200/tests/ --headless --userscripts="${{ github.workspace }}/scripts/"
+      - name: Run Servo Headless
+        run: |
+          cd servo
+          timeout 10m ./mach run http://localhost:5200/tests/ --headless --userscripts="${{ github.workspace }}/scripts/"
