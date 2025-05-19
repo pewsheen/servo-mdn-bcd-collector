@@ -4,8 +4,8 @@ on:
   push:
 
 jobs:
-  build_servo:
-    name: Build Servo
+  coverage-test:
+    name: Coverage Test
     runs-on: ubuntu-22.04
     steps:
       - name: Set LIBCLANG_PATH env
@@ -17,6 +17,7 @@ jobs:
         with:
           repository: openwebdocs/mdn-bcd-collector
           submodules: true
+          ref: 42a135bdeba8ba2678b669638d7812857435eee6
           path: collector
       - name: Clone Servo
         uses: actions/checkout@v4
@@ -55,7 +56,12 @@ jobs:
           done
 
           echo "Server is up!"
-      - name: Run Servo Headless
+      - name: Run test and generate report
         run: |
           cd servo
           timeout 10m ./mach run http://localhost:5200/tests/ --headless --userscripts="${{ github.workspace }}/scripts/"
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: report
+          path: ${{ github.workspace }}/collector/download/
