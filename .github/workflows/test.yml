@@ -8,9 +8,12 @@ jobs:
     name: Build Servo
     runs-on: ubuntu-22.04
     steps:
-      - name: Clone collector
+      - name: Clone Repository
+        uses: actions/checkout@v4
+      - name: Clone mdn-bcd-collector
         uses: actions/checkout@v4
         with:
+          repository: openwebdocs/mdn-bcd-collector
           submodules: true
           path: collector
       - name: Clone Servo
