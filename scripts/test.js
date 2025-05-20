@@ -1,4 +1,7 @@
+// After mdn-bcd-collector's tests page is loaded, run the test.
 onload = () => {
+  // collector will generate a script based on the test environment settings.
+  // We only need the parameters from the script and call the bcd.go function by ourselves.
   let run_str = document.getElementById('run').onclick.toString();
   const resourceCount = extractResourceCount(run_str);
 
@@ -12,7 +15,7 @@ async function onBcdTestComplete(results) {
   await sendReport(results);
 
   // Trigger report export.
-  // This will make collector generate a json report in the download directory.
+  // This will make collector generate a json report in the `collector/download/` directory.
   let exportElement = document.getElementById('export');
   exportElement.submit();
 
