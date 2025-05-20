@@ -8,13 +8,18 @@ onload = () => {
   });
 };
 
-function onBcdTestComplete(results) {
-  sendReport(results);
+async function onBcdTestComplete(results) {
+  await sendReport(results);
 
+  // Trigger report export.
+  // This will make collector generate a json report in the download directory.
   let exportElement = document.getElementById('export');
   exportElement.submit();
 
-  close();
+  console.log('Export submitted');
+
+  // Close the window to terminate the servo process.
+  window.close();
 }
 
 function extractResourceCount(input) {
@@ -22,35 +27,25 @@ function extractResourceCount(input) {
   return match ? parseInt(match[1], 10) : null;
 }
 
-function sendReport(results) {
-  const body = JSON.stringify(results);
-
-  if (!('XMLHttpRequest' in self)) {
-    updateStatus(
-      'Cannot upload results: XMLHttpRequest is not supported.',
-      'error-notice'
-    );
-    return;
-  }
-
-  const client = new XMLHttpRequest();
+async function sendReport(results) {
+  console.log('Sending report');
 
   const resultsURL =
     (location.origin || location.protocol + '//' + location.host) +
     '/api/results?for=' +
     encodeURIComponent(location.href);
 
-  client.open('POST', resultsURL);
-  client.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-  client.send(body);
-  client.onreadystatechange = function () {
-    if (client.readyState == 4) {
-      if (client.status >= 200 && client.status <= 299) {
-        console.log('Results uploaded.');
-      } else {
-        console.log('Failed to upload results: server error.');
-        console.log('Server response: ' + client.response);
-      }
-    }
-  };
+  const response = await fetch(resultsURL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8',
+    },
+    body: JSON.stringify(results),
+  });
+
+  if (!response.ok) {
+    console.error('Failed to send report:', response.statusText);
+  } else {
+    console.log('Report sent successfully');
+  }
 }
