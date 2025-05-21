@@ -17,7 +17,6 @@ jobs:
         with:
           repository: openwebdocs/mdn-bcd-collector
           submodules: true
-          ref: 42a135bdeba8ba2678b669638d7812857435eee6
           path: collector
       - name: Clone Servo
         uses: actions/checkout@v4
